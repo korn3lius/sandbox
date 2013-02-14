@@ -1,0 +1,58 @@
+diff --git a/print/print.pages.inc b/print/print.pages.inc
+index a7bd734..e6cd091 100644
+--- a/print/print.pages.inc
++++ b/print/print.pages.inc
+@@ -178,6 +178,7 @@ function _print_var_generator($node, $query = NULL, $message = NULL, $cid = NULL
+   $print_sourceurl_date = variable_get('print_sourceurl_date', PRINT_SOURCEURL_DATE_DEFAULT);
+   $print_footer_options = variable_get('print_footer_options', PRINT_FOOTER_OPTIONS_DEFAULT);
+   $print_footer_user = variable_get('print_footer_user', PRINT_FOOTER_USER_DEFAULT);
++  $print_siteurl_enabled = variable_get('print_siteurl_enabled', PRINT_SITEURL_ENABLED_DEFAULT);
+ 
+   $print['language'] = $language->language;
+   $print['title'] = check_plain($node->title);
+@@ -260,7 +261,12 @@ function _print_var_generator($node, $query = NULL, $message = NULL, $cid = NULL
+   if ($published_site) {
+     $print_text_published = filter_xss(variable_get('print_text_published', t('Published on %site_name')));
+     $published = t($print_text_published, array('%site_name' => $published_site));
+-    $print['site_name'] = $published . ' (' . l($base_url, $base_url) . ')';
++    if ($print_siteurl_enabled == 1) {
++      $print['site_name'] = $published . ' (' . l($base_url, $base_url) . ')';
++    }
++    else {
++      $print['site_name'] = $published;
++    }
+   }
+   else {
+     $print['site_name'] = '';
+
+
+diff --git a/print/print.admin.inc b/print/print.admin.inc
+index 6ffb5bb..8499d96 100644
+--- a/print/print.admin.inc
++++ b/print/print.admin.inc
+@@ -161,5 +161,12 @@ function print_main_settings() {
+     '#description' => t("Drupal will attempt to use the page's defined alias in case there is one. To force the use of the fixed URL, activate this option."),
+   );
+ 
++  $form['settings']['print_sourceurl_settings']['print_siteurl_enabled'] = array(
++    '#type' => 'checkbox',
++    '#title' => t('Display site URL'),
++    '#default_value' => variable_get('print_siteurl_enabled', PRINT_SITEURL_ENABLED_DEFAULT),
++    '#description' => t('When this option is selected, the URL for the website will be displayed at the top of the printer-friendly version.'),
++  );
++
+   $form['#attributes'] = array('enctype' => 'multipart/form-data');
+   $form['#validate'][] = '_print_main_settings_validate';
+
+diff --git a/print/print.module b/print/print.module
+index d799a82..e0292b0 100644
+--- a/print/print.module
++++ b/print/print.module
+@@ -69,6 +69,7 @@ define('PRINT_HTML_WINDOWCLOSE_DEFAULT', 1);
+ define('PRINT_SOURCEURL_ENABLED_DEFAULT', 1);
+ define('PRINT_SOURCEURL_DATE_DEFAULT', 0);
+ define('PRINT_SOURCEURL_FORCENODE_DEFAULT', 0);
++define('PRINT_SITEURL_ENABLED_DEFAULT', 1);
+ 
+ define('PRINT_ROBOTS_NOINDEX_DEFAULT', 1);
+ define('PRINT_ROBOTS_NOFOLLOW_DEFAULT', 1);
