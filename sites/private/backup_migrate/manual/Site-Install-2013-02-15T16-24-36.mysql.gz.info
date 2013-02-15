@@ -1,0 +1,8 @@
+filename = "Site-Install-2013-02-15T16-24-36"
+description = ""
+datestamp = "1360916688"
+generator = "Backup and Migrate (http://drupal.org/project/backup_migrate)"
+generatorversion = "7.x-2.x"
+sites[0][version] = "7.18"
+sites[0][name] = "Site-Install"
+sites[0][url] = "http://default/"
